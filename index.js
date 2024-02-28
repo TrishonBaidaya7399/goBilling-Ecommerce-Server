@@ -1,4 +1,4 @@
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const express = require("express")
 const cors = require("cors")
 require("dotenv").config()
@@ -64,7 +64,34 @@ app.get("/cart", async(req, res)=>{
     }
 }) 
 
+//Remove cart item by id
+app.delete("/cart/:id", async (req, res) => {
+    const id = req.params.id;
+    const query = { _id: new ObjectId(id) };
+    const result = await cartCollection.deleteOne(query);
+    res.send(result);
+  });
 
+  // Increase quantity
+app.put("/cart/increase/:id", async (req, res) => {
+    const id = req.params.id;
+    const query = { _id: new ObjectId(id) };
+    const update = { $inc: { quantity: 1 } };
+  
+    const result = await cartCollection.updateOne(query, update);
+    res.send(result);
+  });
+  
+  // Decrease quantity
+  app.put("/cart/decrease/:id", async (req, res) => {
+    const id = req.params.id;
+    const query = { _id: new ObjectId(id) };
+    const update = { $inc: { quantity: -1 } };
+  
+    const result = await cartCollection.updateOne(query, update);
+    res.send(result);
+  });
+  
 
 
 
